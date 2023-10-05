@@ -10,11 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.uflow.uflow.ui.navigation.Screen
+import java.util.Locale
 
 @Composable
 fun BottomNavigationBar(
@@ -28,6 +28,16 @@ fun BottomNavigationBar(
         val currentDestination = navBackStackEntry?.destination
         items.forEach { screen ->
             NavigationBarItem(
+                label = {
+                    Text(
+                        text = screen.title.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        },
+                        textAlign = TextAlign.Center,
+                    )
+                },
                 icon = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         screen.icon?.let {
@@ -36,17 +46,10 @@ fun BottomNavigationBar(
                                 contentDescription = screen.title
                             )
                         }
-                        if (currentDestination?.route == screen.route) {
-                            Text(
-                                text = screen.title.uppercase(),
-                                textAlign = TextAlign.Center,
-                                fontSize = 10.sp
-                            )
-                        }
                     }
                 },
                 selected = currentDestination?.route == screen.route,
-                alwaysShowLabel = false,
+                alwaysShowLabel = true,
                 onClick = {
                     navController.navigate(screen.route) {
                         popUpTo(navController.graph.findStartDestination().id) {

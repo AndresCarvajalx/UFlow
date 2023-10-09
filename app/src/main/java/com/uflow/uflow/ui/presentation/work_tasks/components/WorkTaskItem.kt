@@ -1,5 +1,6 @@
 package com.uflow.uflow.ui.presentation.work_tasks.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.ModeEditOutline
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uflow.uflow.domain.models.WorkTask
 import com.uflow.uflow.domain.models.WorkTask.Companion.iconsOptions
+import com.uflow.uflow.ui.theme.cardBackgroundColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,14 +60,25 @@ fun WorkTaskItem(
         modifier = modifier.height(190.dp),
         border = BorderStroke(1.dp, Color.Black),
         elevation = CardDefaults.cardElevation(5.dp),
-        onClick = { onClickWorkTask() }
+        onClick = {
+            onClickWorkTask()
+        },
+        colors = CardDefaults.cardColors(
+            containerColor = if (workTask.isComplete) {
+                MaterialTheme.colorScheme.background
+            } else {
+                cardBackgroundColor
+            }
+        )
     ) {
         Row {
             AnimatedVisibility(
                 visible = showDescription.value,
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(2.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = workTask.description, style = MaterialTheme.typography.bodyMedium)
@@ -91,6 +107,7 @@ fun WorkTaskItem(
                                 .width(40.dp),
                             imageVector = iconsOptions[workTask.icon].icon?.imageVector!!,
                             contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -145,30 +162,29 @@ fun WorkTaskItem(
 
                     }
                     Column(
-                        modifier = Modifier
-                            .fillMaxHeight(),
+                        modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Checkbox(
-                            checked = workTask.isComplete,
-                            onCheckedChange = {
+                            checked = workTask.isComplete, onCheckedChange = {
                                 onCheckWorkTask()
-                            },
-                            modifier = Modifier.clip(shape = CircleShape)
+                            }, modifier = Modifier.clip(shape = CircleShape)
                         )
 
                         IconButton(onClick = { onClickEdit() }) {
                             Icon(
                                 imageVector = Icons.Outlined.ModeEditOutline,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
                         IconButton(onClick = { onClickDelete() }) {
                             Icon(
                                 imageVector = Icons.Outlined.DeleteOutline,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
                             )
                         }
                     }

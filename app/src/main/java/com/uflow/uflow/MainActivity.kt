@@ -37,11 +37,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            val isSystemInDarkTheme = isSystemInDarkTheme()
-            val isDarkTheme = remember { mutableStateOf(isSystemInDarkTheme) }
-            UFlowTheme(darkTheme = isDarkTheme.value) {
+            UFlowTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -50,7 +47,12 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     Scaffold(
                         floatingActionButton = { FloatingButtonNavigation() },
-                        bottomBar = { BottomNavigationBar(items = items, navController = navController)},
+                        bottomBar = {
+                            BottomNavigationBar(
+                                items = items,
+                                navController = navController
+                            )
+                        },
                     ) { innerPadding ->
                         NavHost(
                             navController,
@@ -60,7 +62,7 @@ class MainActivity : ComponentActivity() {
                             composable(Screen.HomeworkScreen.route) { HomeworkScreen(navController) }
                             composable(Screen.TasksScreen.route) { TaskScreen() }
                             composable(Screen.TimerScreen.route) { TimerScreen(applicationContext) }
-                            composable(Screen.SettingScreen.route) { SettingScreen(navController, isDarkTheme) }
+                            composable(Screen.SettingScreen.route) { SettingScreen(navController) }
                         }
                     }
                 }

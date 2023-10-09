@@ -18,6 +18,7 @@ fun DialogDeleteAllWorkTask(
     onConfirm: () -> Unit
 ) {
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { isOpen.value = false },
         confirmButton = {
             Row {
@@ -28,7 +29,10 @@ fun DialogDeleteAllWorkTask(
                 TextButton(onClick = {
                     onConfirm()
                 }) {
-                    Text(text = "Si")
+                    Text(
+                        text = "Si",
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         },

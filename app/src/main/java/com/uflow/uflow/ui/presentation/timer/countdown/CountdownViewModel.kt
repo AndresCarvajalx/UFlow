@@ -3,14 +3,11 @@ package com.uflow.uflow.ui.presentation.timer.countdown
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.uflow.uflow.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -20,8 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CountdownViewModel @Inject constructor() : ViewModel() {
 
-    private lateinit var onTimeFinish: MediaPlayer
-    private lateinit var onBreakFinish: MediaPlayer
+    private var onTimeFinish: MediaPlayer? = null
+    private var onBreakFinish: MediaPlayer? = null
     private val isOnBreak = mutableStateOf(false)
     val isStarting = mutableStateOf(false)
     val isPaused = mutableStateOf(false)
@@ -58,8 +55,10 @@ class CountdownViewModel @Inject constructor() : ViewModel() {
         }
     }
     fun createMediaPlayer(context: Context) {
-        onTimeFinish = MediaPlayer.create(context, R.raw.alarmclock)
-        onBreakFinish = MediaPlayer.create(context, R.raw.alarmclock2)
+        if(onTimeFinish == null || onBreakFinish == null) {
+            onTimeFinish = MediaPlayer.create(context, R.raw.alarmclock)
+            onBreakFinish = MediaPlayer.create(context, R.raw.alarmbreak)
+        }
     }
 
     fun onStart() {
@@ -75,7 +74,7 @@ class CountdownViewModel @Inject constructor() : ViewModel() {
             override fun onFinish() {
                 isOnBreak.value = !isOnBreak.value
                 if (isOnBreak.value) {
-                    onBreakFinish.start()
+                    onBreakFinish?.start()
                     onStartBreak()
                 } else {
                     isStarting.value = false
@@ -84,7 +83,7 @@ class CountdownViewModel @Inject constructor() : ViewModel() {
                     countdownState.longValue = studyTime.longValue
                     reaming.longValue = countdownState.longValue
                     getFormattedTime(reaming.longValue)
-                    onTimeFinish.start()
+                    onTimeFinish?.start()
 
                 }
             }

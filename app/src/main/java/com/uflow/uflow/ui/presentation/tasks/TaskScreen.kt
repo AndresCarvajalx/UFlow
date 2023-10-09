@@ -88,7 +88,7 @@ fun TaskScreen(
                 modifier = Modifier
                     .padding(top = it.calculateTopPadding())
             ) {
-                Box(modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
+                Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                     OrderSection(
                         modifier = Modifier
                             .fillMaxWidth()

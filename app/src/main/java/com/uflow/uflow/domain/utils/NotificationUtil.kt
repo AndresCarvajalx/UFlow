@@ -133,11 +133,11 @@ class NotificationUtil(val ctx: Context) {
                         intent.putExtra("className", workTask.className)
                         intent.putExtra("assignment", workTask.assignment)
                         intent.putExtra("description", workTask.description)
-                        intent.putExtra("id", workTask.id)
+                        intent.putExtra("id", workTask.id * workTask.id)
 
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,
-                            workTask.id * workTask.id,
+                            workTask.id,
                             intent,
                             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                         )

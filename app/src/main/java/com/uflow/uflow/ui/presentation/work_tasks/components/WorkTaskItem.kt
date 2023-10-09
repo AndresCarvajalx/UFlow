@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowDropDownCircle
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.ModeEditOutline
 import androidx.compose.material3.Card
@@ -56,12 +57,17 @@ fun WorkTaskItem(
     showDescription: MutableState<Boolean>,
     onCheckWorkTask: () -> Unit,
 ) {
+    val showAll = remember {
+        mutableStateOf(false)
+    }
     Card(
-        modifier = modifier.height(190.dp),
+        modifier = modifier,
         border = BorderStroke(1.dp, Color.Black),
         elevation = CardDefaults.cardElevation(5.dp),
         onClick = {
-            onClickWorkTask()
+            if (showAll.value) {
+                onClickWorkTask()
+            }
         },
         colors = CardDefaults.cardColors(
             containerColor = if (workTask.isComplete) {
@@ -84,6 +90,8 @@ fun WorkTaskItem(
                     Text(text = workTask.description, style = MaterialTheme.typography.bodyMedium)
                 }
             }
+
+
             AnimatedVisibility(
                 visible = !showDescription.value,
             ) {
@@ -101,28 +109,61 @@ fun WorkTaskItem(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            modifier = Modifier
-                                .height(40.dp)
-                                .width(40.dp),
-                            imageVector = iconsOptions[workTask.icon].icon?.imageVector!!,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = workTask.priority.toString(),
-                            style = TextStyle(
-                                fontStyle = FontStyle.Italic,
-                                fontSize = 20.sp,
-                                fontFamily = FontFamily.SansSerif
-                            ),
-                            textAlign = TextAlign.Center,
-                            maxLines = 2
-                        )
-                    }
 
+
+                        if (!showAll.value) {
+                            Row(
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Icon(
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .width(40.dp),
+                                    imageVector = iconsOptions[workTask.icon].icon?.imageVector!!,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = workTask.priority.toString(),
+                                    style = TextStyle(
+                                        fontStyle = FontStyle.Italic,
+                                        fontSize = 30.sp,
+                                        fontFamily = FontFamily.SansSerif,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    ),
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                            }
+                        }
+
+                        if (showAll.value) {
+                            Icon(
+                                modifier = Modifier
+                                    .height(40.dp)
+                                    .width(40.dp),
+                                imageVector = iconsOptions[workTask.icon].icon?.imageVector!!,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = workTask.priority.toString(),
+                                style = TextStyle(
+                                    fontStyle = FontStyle.Italic,
+                                    fontSize = 20.sp,
+                                    fontFamily = FontFamily.SansSerif
+                                ),
+                                textAlign = TextAlign.Center,
+                                maxLines = 2
+                            )
+                        }
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -137,55 +178,80 @@ fun WorkTaskItem(
                             maxLines = 2
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = workTask.assignment,
-                            style = MaterialTheme.typography.titleMedium,
-                            textAlign = TextAlign.Center,
-                            maxLines = 1
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = workTask.subject,
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            maxLines = 1
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(text = workTask.toDoDate.toString())
-                            Spacer(modifier = Modifier.width(15.dp))
-                            Text(text = workTask.toDeliveryDate.toString())
+                        AnimatedVisibility(visible = showAll.value) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight(),
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = workTask.assignment,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = workTask.subject,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(text = workTask.toDoDate.toString())
+                                    Spacer(modifier = Modifier.width(15.dp))
+                                    Text(text = workTask.toDeliveryDate.toString())
+                                }
+                            }
                         }
 
                     }
+
                     Column(
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Checkbox(
-                            checked = workTask.isComplete, onCheckedChange = {
-                                onCheckWorkTask()
-                            }, modifier = Modifier.clip(shape = CircleShape)
-                        )
-
-                        IconButton(onClick = { onClickEdit() }) {
+                        IconButton(onClick = { showAll.value = !showAll.value }) {
                             Icon(
-                                imageVector = Icons.Outlined.ModeEditOutline,
+                                imageVector = Icons.Outlined.ArrowDropDownCircle,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primaryContainer
                             )
                         }
+                        AnimatedVisibility(visible = showAll.value) {
+                            Column(
+                                modifier = Modifier.fillMaxHeight(),
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Checkbox(
+                                    checked = workTask.isComplete, onCheckedChange = {
+                                        onCheckWorkTask()
+                                    }, modifier = Modifier.clip(shape = CircleShape)
+                                )
 
-                        IconButton(onClick = { onClickDelete() }) {
-                            Icon(
-                                imageVector = Icons.Outlined.DeleteOutline,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                                IconButton(onClick = { onClickEdit() }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ModeEditOutline,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                IconButton(onClick = { onClickDelete() }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.DeleteOutline,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
                         }
                     }
                 }

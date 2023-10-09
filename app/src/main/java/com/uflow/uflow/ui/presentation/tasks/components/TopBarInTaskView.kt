@@ -46,11 +46,11 @@ fun TopBarInTaskView(
             Text(text = "Todo List")
         },
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.background
         )
     )
     ShowDialogDeleteAll(
-        isDialogOpen= isDialogOpen,
+        isDialogOpen = isDialogOpen,
         onDismiss = {
             isDialogOpen = false
         },
@@ -73,6 +73,7 @@ fun ShowDialogDeleteAll(
 ) {
     if (isDialogOpen) {
         AlertDialog(
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = { onDismiss() },
             confirmButton = {
                 Row {
@@ -81,7 +82,10 @@ fun ShowDialogDeleteAll(
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     TextButton(onClick = { onYesClicked() }) {
-                        Text(text = "Si")
+                        Text(
+                            text = "Si",
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             },

@@ -3,6 +3,7 @@ package com.uflow.uflow.ui.presentation.setting
 import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,43 +32,5 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun SettingScreen(
     navController: NavController,
-    isDarkTheme: MutableState<Boolean>
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-    ) {
-        Text(text = "Testing", fontSize = 30.sp)
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-                    .align(Alignment.CenterVertically),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Modo Oscuro"
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(0.5f)
-                    .align(Alignment.CenterVertically),
-                horizontalAlignment = Alignment.End
-            ) {
-                Switch(
-                    checked = isDarkTheme.value,
-                    onCheckedChange = {
-                        isDarkTheme.value = !isDarkTheme.value
-                    },
-                )
-            }
-
-        }
-    }
 }

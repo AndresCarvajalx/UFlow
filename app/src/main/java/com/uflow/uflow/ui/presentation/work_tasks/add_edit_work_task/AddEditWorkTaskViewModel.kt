@@ -64,8 +64,7 @@ class AddEditWorkTaskViewModel @Inject constructor(
             }
 
             is AddEditWorkTaskEvent.SaveWorkTask -> {
-                if (className.isBlank() || subject.isBlank() || assignment.isBlank() ||
-                    toDeliveryDate == LocalDate.now()
+                if (className.isBlank() || subject.isBlank() || assignment.isBlank()
                 ) {
                     return
                 } else {
@@ -104,6 +103,7 @@ class AddEditWorkTaskViewModel @Inject constructor(
                     // TODO HACER QUE FUNCIONE TO DELIVERY
                     viewModelScope.launch {
                         NotificationUtil(event.context).setNotification(event.context, workTask, NotificationUtil.NOTIFICATION_TO_DO)
+                        NotificationUtil(event.context).setNotification(event.context, workTask, NotificationUtil.NOTIFICATION_TO_DELIVERY)
                     }
                 }
             }

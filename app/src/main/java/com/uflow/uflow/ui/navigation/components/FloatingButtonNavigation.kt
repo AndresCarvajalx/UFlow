@@ -92,13 +92,16 @@ fun DialogOptionBetweenTaskAndWorkTask(
         // modifier = modifier.size(280.dp, 240.dp)
         modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp),
         elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
     ) {
         Column(
             //modifier.background(Color.White)
         ) {
 
             Column(modifier = Modifier.padding(16.dp)) {
-                androidx.compose.material3.Text(
+                Text(
                     text = "Que Quieres Hacer?",
                     textAlign = TextAlign.Center,
                     modifier = Modifier

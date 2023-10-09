@@ -147,26 +147,28 @@ class AddEditWorkTask : ComponentActivity() {
                 try {
                     // toDoDate
                     if (isToDoDateSelection) {
+                        /*
                         if (viewModel.toDeliveryDate == date) {
                             Toast.makeText(
                                 applicationContext,
                                 "El mes de desarrollo tiene que ser diferente al mes de entrega",
                                 Toast.LENGTH_LONG
                             ).show()
-                        } else {
+                        } else {*/
                             viewModel.onEvent(AddEditWorkTaskEvent.OnToDoDateChange(date))
-                        }
+                        //}
                     } else {
                         // toDoDelivery
+                        /*
                         if (viewModel.toDoDate == date) {
                             Toast.makeText(
                                 applicationContext,
                                 "El mes de entrega tiene que ser diferente al mes de desarrollo",
                                 Toast.LENGTH_LONG
                             ).show()
-                        } else {
+                        } else {*/
                             viewModel.onEvent(AddEditWorkTaskEvent.OnToDeliveryDateChange(date))
-                        }
+                        //}
                     }
                 } catch (e: Exception) {
                     Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,5 @@
 package com.uflow.uflow.ui.presentation.work_tasks.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -8,19 +7,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDownCircle
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.ModeEditOutline
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,14 +74,14 @@ fun WorkTaskItem(
             }
         )
     ) {
-        Row {
+        Row() {
             AnimatedVisibility(
                 visible = showDescription.value,
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(2.dp),
+                        .padding(4.dp)
+                        .defaultMinSize(minHeight = 200.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = workTask.description, style = MaterialTheme.typography.bodyMedium)
@@ -97,13 +94,11 @@ fun WorkTaskItem(
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(0.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxHeight()
                             .weight(0.5f, true)
                             .align(Alignment.CenterVertically),
                         verticalArrangement = Arrangement.Center,
@@ -127,7 +122,6 @@ fun WorkTaskItem(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    modifier = Modifier.fillMaxWidth(),
                                     text = workTask.priority.toString(),
                                     style = TextStyle(
                                         fontStyle = FontStyle.Italic,
@@ -152,7 +146,7 @@ fun WorkTaskItem(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                modifier = Modifier.fillMaxWidth(),
+                                //modifier = Modifier.fillMaxWidth(),
                                 text = workTask.priority.toString(),
                                 style = TextStyle(
                                     fontStyle = FontStyle.Italic,
@@ -166,7 +160,7 @@ fun WorkTaskItem(
                     }
                     Column(
                         modifier = Modifier
-                            .fillMaxHeight()
+                            //.fillMaxHeight()
                             .weight(2f, true),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -180,8 +174,7 @@ fun WorkTaskItem(
                         Spacer(modifier = Modifier.height(8.dp))
                         AnimatedVisibility(visible = showAll.value) {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxHeight(),
+                                //modifier = Modifier.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -200,7 +193,7 @@ fun WorkTaskItem(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    //    modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Text(text = workTask.toDoDate.toString())
@@ -213,20 +206,24 @@ fun WorkTaskItem(
                     }
 
                     Column(
-                        modifier = Modifier.fillMaxHeight(),
+                        //modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         IconButton(onClick = { showAll.value = !showAll.value }) {
                             Icon(
-                                imageVector = Icons.Outlined.ArrowDropDownCircle,
+                                imageVector = if (showAll.value) {
+                                    Icons.Outlined.ArrowCircleUp
+                                } else {
+                                    Icons.Outlined.ArrowCircleDown
+                                },
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primaryContainer
                             )
                         }
                         AnimatedVisibility(visible = showAll.value) {
                             Column(
-                                modifier = Modifier.fillMaxHeight(),
+                                //      modifier = Modifier.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {

@@ -102,8 +102,8 @@ class AddEditWorkTaskViewModel @Inject constructor(
                     }
                     // TODO HACER QUE FUNCIONE TO DELIVERY
                     viewModelScope.launch {
-                        NotificationUtil(event.context).setNotification(event.context, workTask, NotificationUtil.NOTIFICATION_TO_DO)
                         NotificationUtil(event.context).setNotification(event.context, workTask, NotificationUtil.NOTIFICATION_TO_DELIVERY)
+                        NotificationUtil(event.context).setNotification(event.context, workTask, NotificationUtil.NOTIFICATION_TO_DO)
                     }
                 }
             }

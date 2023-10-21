@@ -2,12 +2,16 @@ package com.uflow.uflow.ui.presentation.work_tasks.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -79,15 +83,12 @@ fun WorkTaskItem(
                 visible = showDescription.value,
             ) {
                 Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .defaultMinSize(minHeight = 200.dp),
+                    modifier = Modifier.height(200.dp).padding(start=10.dp, end=10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = workTask.description, style = MaterialTheme.typography.bodyMedium)
                 }
             }
-
 
             AnimatedVisibility(
                 visible = !showDescription.value,
@@ -95,11 +96,10 @@ fun WorkTaskItem(
                 Row(
                     modifier = Modifier
                         .padding(0.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column(
                         modifier = Modifier
-                            .weight(0.5f, true)
+                            .weight(0.5f)
                             .align(Alignment.CenterVertically),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -144,7 +144,6 @@ fun WorkTaskItem(
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 //modifier = Modifier.fillMaxWidth(),
                                 text = workTask.priority.toString(),
@@ -160,9 +159,8 @@ fun WorkTaskItem(
                     }
                     Column(
                         modifier = Modifier
-                            //.fillMaxHeight()
-                            .weight(2f, true),
-                        verticalArrangement = Arrangement.SpaceBetween,
+                            .weight(2f),
+                        verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -171,10 +169,9 @@ fun WorkTaskItem(
                             textAlign = TextAlign.Center,
                             maxLines = 2
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
                         AnimatedVisibility(visible = showAll.value) {
                             Column(
-                                //modifier = Modifier.fillMaxHeight(),
+                                modifier = Modifier.height(175.dp).fillMaxWidth(),
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -184,29 +181,26 @@ fun WorkTaskItem(
                                     textAlign = TextAlign.Center,
                                     maxLines = 1
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = workTask.subject,
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center,
                                     maxLines = 1
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    //    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(text = workTask.toDoDate.toString())
-                                    Spacer(modifier = Modifier.width(15.dp))
-                                    Text(text = workTask.toDeliveryDate.toString())
-                                }
+                                Text(
+                                    text = workTask.toDeliveryDate.toString(),
+                                    color = MaterialTheme.colorScheme.onError,
+                                    style = TextStyle(
+                                        fontStyle = FontStyle.Italic,
+                                        fontSize = 25.sp
+                                    )
+                                )
                             }
                         }
-
                     }
 
                     Column(
-                        //modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -223,16 +217,15 @@ fun WorkTaskItem(
                         }
                         AnimatedVisibility(visible = showAll.value) {
                             Column(
-                                //      modifier = Modifier.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceBetween,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Checkbox(
                                     checked = workTask.isComplete, onCheckedChange = {
                                         onCheckWorkTask()
-                                    }, modifier = Modifier.clip(shape = CircleShape)
+                                    },
+                                    modifier = Modifier.clip(shape = CircleShape)
                                 )
-
                                 IconButton(onClick = { onClickEdit() }) {
                                     Icon(
                                         imageVector = Icons.Outlined.ModeEditOutline,
@@ -240,7 +233,6 @@ fun WorkTaskItem(
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
-
                                 IconButton(onClick = { onClickDelete() }) {
                                     Icon(
                                         imageVector = Icons.Outlined.DeleteOutline,

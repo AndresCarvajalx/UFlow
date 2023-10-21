@@ -98,7 +98,7 @@ class NotificationUtil(val ctx: Context) {
                         intent.putExtra("className", workTask.className)
                         intent.putExtra("assignment", workTask.assignment)
                         intent.putExtra("description", workTask.description)
-                        intent.putExtra("id", workTask.id)
+                        intent.putExtra("id", "TO_DO_$workTask.id")
 
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,
@@ -133,7 +133,7 @@ class NotificationUtil(val ctx: Context) {
                         intent.putExtra("className", workTask.className)
                         intent.putExtra("assignment", workTask.assignment)
                         intent.putExtra("description", workTask.description)
-                        intent.putExtra("id", workTask.id * workTask.id)
+                        intent.putExtra("id", workTask.id* (-1))
 
                         val pendingIntent = PendingIntent.getBroadcast(
                             context,

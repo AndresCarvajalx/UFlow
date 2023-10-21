@@ -33,15 +33,15 @@ class NotificationBroadcast: BroadcastReceiver() {
     ){
         val notification = NotificationCompat.Builder(context, NotificationUtil.CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_air_24)
-            .setContentTitle("UFlow te informa tienes tarea  de $className ")
+            .setContentTitle("Tienes tarea  de $className ")
             .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
             .setAutoCancel(true)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("asignado: $assignment, descripcion: $description")
+                    .bigText("Tarea: $assignment, descripcion: $description")
             ).build()
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(id, notification)
+        manager.notify(id.hashCode(), notification)
     }
 }

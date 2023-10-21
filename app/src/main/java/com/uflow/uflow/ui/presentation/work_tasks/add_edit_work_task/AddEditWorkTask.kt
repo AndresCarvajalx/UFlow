@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Class
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.EditCalendar
 import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material.icons.outlined.RemoveCircle
 import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material.icons.outlined.Timelapse
 import androidx.compose.material.icons.outlined.WorkOutline
@@ -155,7 +158,7 @@ class AddEditWorkTask : ComponentActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {*/
-                            viewModel.onEvent(AddEditWorkTaskEvent.OnToDoDateChange(date))
+                        viewModel.onEvent(AddEditWorkTaskEvent.OnToDoDateChange(date))
                         //}
                     } else {
                         // toDoDelivery
@@ -167,7 +170,7 @@ class AddEditWorkTask : ComponentActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {*/
-                            viewModel.onEvent(AddEditWorkTaskEvent.OnToDeliveryDateChange(date))
+                        viewModel.onEvent(AddEditWorkTaskEvent.OnToDeliveryDateChange(date))
                         //}
                     }
                 } catch (e: Exception) {
@@ -260,7 +263,7 @@ class AddEditWorkTask : ComponentActivity() {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = viewModel.priority.toString(),
-                label = { Text(text = "Prioridad")},
+                label = { Text(text = "Prioridad") },
                 onValueChange = {
                     try {
                         viewModel.onEvent(AddEditWorkTaskEvent.OnPriorityChange(it.toInt()))
@@ -292,38 +295,29 @@ class AddEditWorkTask : ComponentActivity() {
                 readOnly = true,
                 textStyle = TextStyle(textAlign = TextAlign.Center),
 
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    value = viewModel.toDoDate.toString(),
-                    onValueChange = {},
-                    label = {
-                        Text(text = "Fecha de desarrollo")
-                    },
-                    placeholder = {
-                        Text(text = "Lo voy a hacer el dia...")
-                    },
-                    leadingIcon = {
-                        IconButton(onClick = {
-                            isToDoDateSelection = true
-                            calendarState.show()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.EditCalendar,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    readOnly = true,
-                    textStyle = TextStyle(textAlign = TextAlign.Center),
                 )
-                Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // DATE AND TIME PICKER
+            val addReminder = remember {
+                mutableStateOf(false)
+            }
+            val timePickerState = rememberUseCaseState()
+            ClockDialog(
+                state = timePickerState,
+                selection = ClockSelection.HoursMinutes { hours, minutes ->
+                    if (isToDoTimeSelection) {
+                        viewModel.toDoTime =
+                            viewModel.toDoTime.withHour(hours).withMinute(minutes)
+                                .withSecond(0).withNano(0)
+                    } else {
+                        viewModel.toDeliveryTime =
+                            viewModel.toDeliveryTime.withHour(hours).withMinute(minutes)
+                                .withSecond(0).withNano(0)
+                    }
+                }
+            )
+            Row {
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -350,58 +344,12 @@ class AddEditWorkTask : ComponentActivity() {
                     readOnly = true,
                     textStyle = TextStyle(textAlign = TextAlign.Center),
                 )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-
-            val timePickerState = rememberUseCaseState()
-            ClockDialog(
-                state = timePickerState,
-                selection = ClockSelection.HoursMinutes { hours, minutes ->
-                    if(isToDoTimeSelection){
-                        viewModel.toDoTime = viewModel.toDoTime.withHour(hours).withMinute(minutes).withSecond(0).withNano(0)
-                    }else {
-                        viewModel.toDeliveryTime = viewModel.toDeliveryTime.withHour(hours).withMinute(minutes).withSecond(0).withNano(0)
-                    }
-                }
-            )
-
-            // PART TO SELECT TIME CLOCK
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    value = viewModel.toDoTime.format(DateTimeFormatter.ofPattern("HH:mm")).toString(),
-                    onValueChange = {},
-                    label = {
-                        Text(text = "Hora de desarrollo")
-                    },
-                    placeholder = {
-                        Text(text = "Lo voy a hacer el dia...")
-                    },
-                    leadingIcon = {
-                        IconButton(onClick = {
-                            isToDoTimeSelection = true
-                            timePickerState.show()
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Timelapse,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    readOnly = true,
-                    textStyle = TextStyle(textAlign = TextAlign.Center),
-
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    value = viewModel.toDeliveryTime.format(DateTimeFormatter.ofPattern("HH:mm")).toString(),
+                    value = viewModel.toDeliveryTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                        .toString(),
                     onValueChange = {},
                     label = {
                         Text(text = "Hora de entrega")
@@ -420,10 +368,88 @@ class AddEditWorkTask : ComponentActivity() {
                     readOnly = true,
                     textStyle = TextStyle(textAlign = TextAlign.Center),
 
+                    )
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            // TODO ONLY REQUIRE DELIVERY DATE AND OPTIONAL TODO DATE
+            AnimatedVisibility(visible = addReminder.value) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        value = viewModel.toDoDate.toString(),
+                        onValueChange = {},
+                        label = {
+                            Text(text = "Fecha de desarrollo")
+                        },
+                        placeholder = {
+                            Text(text = "Lo voy a hacer el dia...")
+                        },
+                        leadingIcon = {
+                            IconButton(onClick = {
+                                isToDoDateSelection = true
+                                calendarState.show()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.EditCalendar,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        readOnly = true,
+                        textStyle = TextStyle(textAlign = TextAlign.Center),
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        value = viewModel.toDoTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            .toString(),
+                        onValueChange = {},
+                        label = {
+                            Text(text = "Hora de desarrollo")
+                        },
+                        placeholder = {
+                            Text(text = "Lo voy a hacer el dia...")
+                        },
+                        leadingIcon = {
+                            IconButton(onClick = {
+                                isToDoTimeSelection = true
+                                timePickerState.show()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Timelapse,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        readOnly = true,
+                        textStyle = TextStyle(textAlign = TextAlign.Center),
+
+                        )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+            }
+            TextButton(
+                onClick = { addReminder.value = !addReminder.value },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Agregar Recordatorio Fecha de Desarrollo?")
+                Icon(
+                    imageVector = if (addReminder.value) {
+                        Icons.Outlined.RemoveCircle
+                    } else {
+                        Icons.Outlined.AddCircle
+                    },
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primaryContainer
                 )
             }
-
-
             Spacer(modifier = Modifier.height(20.dp))
             val iconPickerState = rememberUseCaseState()
             OptionDialog(
@@ -475,6 +501,10 @@ class AddEditWorkTask : ComponentActivity() {
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled = viewModel.className.isNotBlank() && viewModel.assignment.isNotBlank() && viewModel.subject.isNotBlank(),
                 onClick = {
+                    if(!addReminder.value){
+                        viewModel.toDoTime = viewModel.toDeliveryTime
+                        viewModel.toDoDate = viewModel.toDeliveryDate
+                    }
                     scope.launch {
                         viewModel.onEvent(AddEditWorkTaskEvent.SaveWorkTask(applicationContext))
                         Toast.makeText(

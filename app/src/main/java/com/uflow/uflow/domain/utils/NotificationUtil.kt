@@ -29,13 +29,13 @@ class NotificationUtil(val ctx: Context) {
 
     }
 
-    init{
+    init {
         createChannel(context = ctx)
     }
 
     private fun createChannel(
         context: Context
-    ){
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notification = NotificationChannel(
                 CHANNEL_ID,
@@ -44,7 +44,8 @@ class NotificationUtil(val ctx: Context) {
             ).apply {
                 description = "Alarm Description"
             }
-            val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(notification)
         }
     }
@@ -54,14 +55,14 @@ class NotificationUtil(val ctx: Context) {
         title: String = "Alarm",
         priority: Int = NotificationManager.IMPORTANCE_DEFAULT,
         description: String = "Alarm Description"
-    ){
+    ) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_air_24)
             .setContentTitle(title)
             .setContentText(description)
             .setPriority(priority)
             .setAutoCancel(true)
-        with(NotificationManagerCompat.from(context)){
+        with(NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
                     context,
                     Manifest.permission.POST_NOTIFICATIONS
@@ -76,82 +77,63 @@ class NotificationUtil(val ctx: Context) {
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
-            notify( 1 ,builder.build())
+            notify(1, builder.build())
         }
     }
+
+    fun setNotification(context: Context = this.ctx, workTask: WorkTask) {
+        val toDoCalendar = Calendar.getInstance()
+        toDoCalendar.set(Calendar.YEAR, workTask.toDoDate.year)
+        toDoCalendar.set(Calendar.MONTH, workTask.toDoDate.monthValue - 1)
+        toDoCalendar.set(Calendar.DAY_OF_MONTH, workTask.toDoDate.dayOfMonth)
+        toDoCalendar.set(Calendar.HOUR_OF_DAY, workTask.toDoTime.hour)
+        toDoCalendar.set(Calendar.MINUTE, workTask.toDoTime.minute)
+
+        val deliveryCalendar = Calendar.getInstance()
+        deliveryCalendar.set(Calendar.YEAR, workTask.toDeliveryDate.year)
+        deliveryCalendar.set(Calendar.MONTH, workTask.toDeliveryDate.monthValue - 1)
+        deliveryCalendar.set(Calendar.DAY_OF_MONTH, workTask.toDeliveryDate.dayOfMonth)
+        deliveryCalendar.set(Calendar.HOUR_OF_DAY, workTask.toDeliveryTime.hour)
+        deliveryCalendar.set(Calendar.MINUTE, workTask.toDeliveryTime.minute)
+
+        val currentTime = System.currentTimeMillis()
+
+        if (toDoCalendar.timeInMillis > currentTime) {
+            scheduleNotification(context, workTask, "TO_DO_${workTask.id}", toDoCalendar)
+        }
+
+
+        if (deliveryCalendar.timeInMillis > currentTime) {
+            scheduleNotification(context, workTask, "TO_DELIVERY_${workTask.id}", deliveryCalendar)
+        }
+
+    }
+
     @SuppressLint("ScheduleExactAlarm")
-    fun setNotification(context: Context = this.ctx, workTask: WorkTask, notificationId: String) {
-        when(notificationId) {
-            NOTIFICATION_TO_DO -> {
-                if (workTask.toDoTime > LocalTime.now()) {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.YEAR, workTask.toDoDate.year)
-                    calendar.set(Calendar.MONTH, workTask.toDoDate.monthValue - 1)
-                    calendar.set(Calendar.DAY_OF_MONTH, workTask.toDoDate.dayOfMonth)
-                    calendar.set(Calendar.HOUR_OF_DAY, workTask.toDoTime.hour)
-                    calendar.set(Calendar.MINUTE, workTask.toDoTime.minute)
+    private fun scheduleNotification(
+        context: Context,
+        workTask: WorkTask,
+        notificationId: String,
+        calendar: Calendar
+    ) {
+        val intent = Intent(context, NotificationBroadcast::class.java)
+        intent.putExtra("className", workTask.className)
+        intent.putExtra("assignment", workTask.assignment)
+        intent.putExtra("description", workTask.description)
+        intent.putExtra("id", notificationId)
 
-                    val notifyIn: Long = calendar.timeInMillis - System.currentTimeMillis() // Remove
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId.hashCode(),
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
-                    if (notifyIn > 0) {
-                        val intent = Intent(context, NotificationBroadcast::class.java)
-                        intent.putExtra("className", workTask.className)
-                        intent.putExtra("assignment", workTask.assignment)
-                        intent.putExtra("description", workTask.description)
-                        intent.putExtra("id", "TO_DO_$workTask.id")
-
-                        val pendingIntent = PendingIntent.getBroadcast(
-                            context,
-                            workTask.id,
-                            intent,
-                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-
-                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            Calendar.getInstance().timeInMillis + notifyIn,
-                            pendingIntent
-                        )
-                    }
-                }
-            }
-
-            NOTIFICATION_TO_DELIVERY -> {
-                if (workTask.toDeliveryTime > LocalTime.now()) {
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.YEAR, workTask.toDeliveryDate.year)
-                    calendar.set(Calendar.MONTH, workTask.toDeliveryDate.monthValue - 1)
-                    calendar.set(Calendar.DAY_OF_MONTH, workTask.toDeliveryDate.dayOfMonth)
-                    calendar.set(Calendar.HOUR_OF_DAY, workTask.toDeliveryTime.hour)
-                    calendar.set(Calendar.MINUTE, workTask.toDeliveryTime.minute)
-
-                    val notifyIn: Long = calendar.timeInMillis - System.currentTimeMillis() // Remove
-
-                    if (notifyIn > 0) {
-                        val intent = Intent(context, NotificationBroadcast::class.java)
-                        intent.putExtra("className", workTask.className)
-                        intent.putExtra("assignment", workTask.assignment)
-                        intent.putExtra("description", workTask.description)
-                        intent.putExtra("id", workTask.id* (-1))
-
-                        val pendingIntent = PendingIntent.getBroadcast(
-                            context,
-                            workTask.id,
-                            intent,
-                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-
-                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        alarmManager.setExact(
-                            AlarmManager.RTC_WAKEUP,
-                            Calendar.getInstance().timeInMillis + notifyIn,
-                            pendingIntent
-                        )
-                    }
-                }
-            }
-        }
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            pendingIntent
+        )
     }
-
 }

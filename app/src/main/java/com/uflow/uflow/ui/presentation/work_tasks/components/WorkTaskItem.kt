@@ -2,15 +2,12 @@ package com.uflow.uflow.ui.presentation.work_tasks.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -189,7 +186,7 @@ fun WorkTaskItem(
                                 )
                                 Text(
                                     text = workTask.toDeliveryDate.toString(),
-                                    color = MaterialTheme.colorScheme.onError,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                     style = TextStyle(
                                         fontStyle = FontStyle.Italic,
                                         fontSize = 25.sp
